@@ -1,0 +1,1 @@
+Para ejecutar un test [node nombre-test.js]
