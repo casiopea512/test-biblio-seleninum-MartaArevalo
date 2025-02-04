@@ -3,6 +3,10 @@ const { BaseTest } = require("./BaseTest.js")
 const { By, until } = require("selenium-webdriver");
 const assert = require('assert');
 
+// .env
+require('dotenv').config();
+console.log(process.env); // aquí hay todas las variables de entorno
+
 // heredem una classe amb un sol mètode test()
 // emprem this.driver per utilitzar Selenium
 
@@ -10,21 +14,27 @@ class MyTest extends BaseTest
 {
 	async test() {
         // Loging test
-        //////////////////////////////////////////////////////
-        await this.driver.get("");
-        
+        var site = process.env.urlLogin;
+        await this.driver.get(site+"/admin/login");        
+
         // cercar loging box
-        let inputUserName = await this.driver.findElement(By.tagName("id_username")).getText();
-        let inputUserPassword = await this.driver.findElement(By.tagName("id_password")).getText();
+        let inputUserName = await this.driver.wait(until.elementLocated(By.id("id_username")),10000);
+        let inputUserPassword = await this.driver.wait(until.elementLocated(By.id("id_password")),10000);
 
         // posar usuari i pass
-        
+        inputUserName.sendKeys(process.env.USUARI);
+        inputUserPassword.sendKeys(process.env.CONTRASENYA);
+
         // boto send -click()
-        let submitButton = await driver.findElement(By.tagName("button")); // O ajusta el selector según tu HTML
-        await submitButton.click();
+        let submitButton = await this.driver.wait(until.elementLocated(By.css("input[value='Iniciar sessió']")),10000);
+        submitButton.click();
 
-        // ver si entra a la página
-
+        // saber si te has logueado o no
+        let logoutButton = await this.driver.wait(until.elementLocated(By.xpath('//button[@type="submit"]')), 10000);
+        var currentLogoutText = await logoutButton.getText();
+        var expectedText = "FINALITZAR SESSIÓ";
+        assert( currentLogoutText==expectedText, "Login fallit.\n\tTEXT TROBAT="+currentLogoutText+"\n\tTEXT ESPERAT="+expectedText);
+ 
         console.log("TEST OK");
 	}
 }
