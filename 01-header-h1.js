@@ -16,7 +16,7 @@ class MyTest extends BaseTest
         // testejem H1 a la home page
         //////////////////////////////////////////////////////
 
-        var site = process.env.urlLogin;
+        var site = process.env.URLLOGIN;
         await this.driver.get(site+"/admin/login");
         var currentText = await this.driver.findElement(By.tagName("h1")).getText();
         var expectedText = "Administració de Django";

@@ -5,7 +5,7 @@ require('dotenv').config();
 
 class MyTest extends BaseTest {
     async test() {
-        var site = process.env.urlLogin;
+        var site = process.env.URLLOGIN;
         await this.driver.get(site + "/admin/login");
 
         // Buscar los campos de usuario y contraseña

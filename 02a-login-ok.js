@@ -14,7 +14,7 @@ class MyTest extends BaseTest
 {
 	async test() {
         // Loging test
-        var site = process.env.urlLogin;
+        var site = process.env.URLLOGIN;
         await this.driver.get(site+"/admin/login");        
 
         // cercar loging box
