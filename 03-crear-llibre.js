@@ -21,22 +21,15 @@ class MyTest extends BaseTest {
             submitButton.click();
 
             // verificar login
-            try {
-                let logoutButton = await this.driver.wait(until.elementLocated(By.xpath('//button[@type="submit"]')), 10000);
-                var currentLogoutText = await logoutButton.getText();
-                var expectedText = "FINALITZAR SESSIÓ";
+            let logoutButton = await this.driver.wait(until.elementLocated(By.xpath('//button[@type="submit"]')), 10000);
+            var currentLogoutText = await logoutButton.getText();
+            var expectedText = "FINALITZAR SESSIÓ";
 
-                if (currentLogoutText !== expectedText) {
-                    throw new Error(`ERROR: Logout Button incorrecte. Trobat: "${currentText}", Esperat: "${expectedText}". No se ha conseguido iniciar sesión`);
-                }
-            
-                console.log("Login verificado correctamente.");
-            } catch (error) {
-                console.error("ERROR: No se pudo verificar el login - " + error.message);
-                assert.fail(error.message);
+            if (currentLogoutText !== expectedText) {
+                throw new Error(`ERROR: Logout Button incorrecto. Encontrado: "${currentLogoutText}", Esperado: "${expectedText}". No se ha conseguido iniciar sesión`);
             }
-            
-            
+
+            console.log("Login verificado correctamente.");
 
             // crear un libro
             console.log("Accediendo a la página de creación de libros...");
@@ -49,14 +42,13 @@ class MyTest extends BaseTest {
             let saveButton = await this.driver.wait(until.elementLocated(By.xpath("//input[@value='Desar']")), 5000);
             saveButton.click();
 
-            // ver que se ha creado el libro
-            try {
-                await this.driver.wait(until.elementLocated(By.xpath("//li[contains(@class, 'success')]")), 10000);
-                console.log("Libro creado con éxito.");
-            } catch (error) {
+            // verificar que se ha creado el libro
+            let successMessage = await this.driver.wait(until.elementLocated(By.xpath("//li[contains(@class, 'success')]")), 10000);
+            if (!successMessage) {
                 throw new Error("ERROR: No se encontró mensaje de éxito. Puede que la creación haya fallado.");
             }
 
+            console.log("Libro creado con éxito.");
             console.log("TEST OK");
         } catch (error) {
             console.error("TEST FALLIDO: " + error.message);
