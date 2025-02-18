@@ -1,48 +1,55 @@
-// carreguem les llibreries
-const { BaseTest } = require("./BaseTest.js")
+// Cargamos las librerías
+const { BaseTest } = require("./BaseTest.js");
 const { By, until } = require("selenium-webdriver");
-const assert = require('assert');
+const assert = require("assert");
 
-// .env
-require('dotenv').config();
-console.log(process.env); // aquí hay todas las variables de entorno
+// Cargar variables de entorno
+require("dotenv").config();
+console.log(process.env); // Aquí hay todas las variables de entorno
 
-// heredem una classe amb un sol mètode test()
-// emprem this.driver per utilitzar Selenium
+// Heredamos una clase con un solo método test()
+// Usamos this.driver para utilizar Selenium
 
-class MyTest extends BaseTest
-{
-	async test() {
-        // Loging test
-        var site = process.env.URLLOGIN;
-        await this.driver.get(site+"/admin/login");        
+class MyTest extends BaseTest {
+    async test() {
+        try {
+            // Login test
+            var site = process.env.URLLOGIN;
+            await this.driver.get(site + "/admin/login");
 
-        // cercar loging box
-        let inputUserName = await this.driver.wait(until.elementLocated(By.id("id_username")),10000);
-        let inputUserPassword = await this.driver.wait(until.elementLocated(By.id("id_password")),10000);
+            // Buscar login box
+            let inputUserName = await this.driver.wait(until.elementLocated(By.id("id_username")), 10000);
+            let inputUserPassword = await this.driver.wait(until.elementLocated(By.id("id_password")), 10000);
 
-        // posar usuari i pass
-        inputUserName.sendKeys(process.env.USUARI);
-        inputUserPassword.sendKeys(process.env.CONTRASENYA);
+            // Introducir usuario y contraseña
+            inputUserName.sendKeys(process.env.USUARI);
+            inputUserPassword.sendKeys(process.env.CONTRASENYA);
 
-        // boto send -click()
-        let submitButton = await this.driver.wait(until.elementLocated(By.css("input[value='Iniciar sessió']")),10000);
-        submitButton.click();
+            // Botón de envío - click()
+            let submitButton = await this.driver.wait(until.elementLocated(By.css("input[value='Iniciar sessió']")), 10000);
+            submitButton.click();
 
-        // saber si te has logueado o no
-        let logoutButton = await this.driver.wait(until.elementLocated(By.xpath('//button[@type="submit"]')), 10000);
-        var currentLogoutText = await logoutButton.getText();
-        var expectedText = "FINALITZAR SESSIÓ";
-        assert( currentLogoutText==expectedText, "Login fallit.\n\tTEXT TROBAT="+currentLogoutText+"\n\tTEXT ESPERAT="+expectedText);
- 
-        console.log("TEST OK");
-	}
+            // Verificar login
+            let logoutButton = await this.driver.wait(until.elementLocated(By.xpath('//button[@type="submit"]')), 10000);
+            var currentLogoutText = await logoutButton.getText();
+            var expectedText = "FINALITZAR SESSIÓ";
+
+            if (currentLogoutText !== expectedText) {
+                throw new Error(`Login fallido.\n\tTEXT ENCONTRADO: "${currentLogoutText}"\n\tTEXT ESPERADO: "${expectedText}"`);
+            }
+
+            console.log("Login verificado correctamente.");
+            console.log("TEST OK");
+        } catch (error) {
+            console.error("TEST FALLIDO: " + error.message);
+            assert.fail(error.message);
+        }
+    }
 }
 
-// executem el test
-
+// Ejecutamos el test
 (async function test_example() {
-	const test = new MyTest();
-	await test.run();
-	console.log("END")
+    const test = new MyTest();
+    await test.run();
+    console.log("END");
 })();
